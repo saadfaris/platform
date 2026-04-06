@@ -18,6 +18,30 @@ import '@hcengineering/platform-rig/profiles/ui/svelte'
 import { derived, writable } from 'svelte/store'
 import { ThemeVariant, type ThemeVariantType } from './variants'
 
+/**
+ * @public
+ * Text direction for a UI locale.
+ */
+export type Direction = 'ltr' | 'rtl'
+
+/**
+ * @public
+ * Languages whose script is written right-to-left.
+ * Centralized so that adding a new RTL locale is a one-line change.
+ */
+export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar', 'he', 'fa', 'ur'])
+
+/**
+ * @public
+ * Returns 'rtl' for known RTL locales (matched on the base language tag,
+ * so 'ar', 'ar-SA', 'ar-EG' all resolve to 'rtl'), 'ltr' otherwise.
+ */
+export const getDirectionForLanguage = (language: string | undefined | null): Direction => {
+  if (language == null || language === '') return 'ltr'
+  const base = language.toLowerCase().split(/[-_]/)[0]
+  return RTL_LANGUAGES.has(base) ? 'rtl' : 'ltr'
+}
+
 export { default as Theme } from './Theme.svelte'
 export { default as InvertedTheme } from './InvertedTheme.svelte'
 export { ThemeVariant, type ThemeVariantType } from './variants'
@@ -67,8 +91,15 @@ export const getCurrentLanguage = (): string => {
  */
 export const getCurrentEmoji = (): string => localStorage.getItem('emoji') ?? getDefaultProps('emoji', 'emoji-system')
 
+/**
+ * @public
+ * Resolved text direction for the currently selected UI language.
+ */
+export const getCurrentDirection = (): Direction => getDirectionForLanguage(getCurrentLanguage())
+
 export class ThemeOptions {
   readonly variant: ThemeVariantType
+  readonly direction: Direction
   constructor (
     readonly fontSize: number,
     readonly dark: boolean,
@@ -76,6 +107,7 @@ export class ThemeOptions {
     readonly emoji: string
   ) {
     this.variant = dark ? ThemeVariant.Dark : ThemeVariant.Light
+    this.direction = getDirectionForLanguage(language)
   }
 }
 export const themeStore = writable<ThemeOptions>()
@@ -92,3 +124,4 @@ export function initThemeStore (): void {
 }
 
 export const languageStore = derived(themeStore, ($theme) => $theme?.language ?? '')
+export const directionStore = derived(themeStore, ($theme): Direction => $theme?.direction ?? 'ltr')

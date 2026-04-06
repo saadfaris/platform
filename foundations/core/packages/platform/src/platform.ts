@@ -181,6 +181,7 @@ export default plugin(platformId, {
   },
   metadata: {
     locale: '' as Metadata<string>,
+    direction: '' as Metadata<'ltr' | 'rtl'>,
     LoadHelper: '' as Metadata<<T extends Resources>(loader: PluginLoader<T>) => Promise<PluginModule<T>>>
   }
 })

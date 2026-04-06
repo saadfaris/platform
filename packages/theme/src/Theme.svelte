@@ -26,13 +26,27 @@
     isSystemThemeDark,
     isThemeDark,
     themeStore as themeOptions,
-    getCurrentEmoji
+    getCurrentEmoji,
+    getDirectionForLanguage,
+    type Direction
   } from './'
 
   const currentTheme = writable<string>(getCurrentTheme())
   const currentFontSize = writable<string>(getCurrentFontSize())
   const currentLanguage = writable<string>(getCurrentLanguage())
+  const currentDirection = writable<Direction>(getDirectionForLanguage(getCurrentLanguage()))
   const currentEmoji = writable<string>(getCurrentEmoji())
+
+  // Centralized direction application: keeps <html dir>, the platform metadata,
+  // and the reactive store in sync. Called from setLanguage() and onMount().
+  const applyDirection = (language: string): void => {
+    const dir = getDirectionForLanguage(language)
+    currentDirection.set(dir)
+    setMetadata(platform.metadata.direction, dir)
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = dir
+    }
+  }
 
   const setOptions = (currentFont: string, theme: string, language: string, emoji: string) => {
     themeOptions.set(new ThemeOptions(currentFont === 'normal-font' ? 16 : 14, isThemeDark(theme), language, emoji))
@@ -68,6 +82,10 @@
     }
     Analytics.setTag('language', language)
     setMetadata(platform.metadata.locale, $currentLanguage)
+    applyDirection(language)
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language
+    }
     await loadPluginStrings($currentLanguage, set)
     setOptions(getCurrentFontSize(), getCurrentTheme(), language, getCurrentEmoji())
   }
@@ -94,6 +112,9 @@
   setContext('lang', {
     currentLanguage,
     setLanguage
+  })
+  setContext('direction', {
+    currentDirection
   })
   setContext('emoji', {
     currentEmoji,
@@ -132,6 +153,7 @@
     void setLanguage($currentLanguage, false)
     void loadPluginStrings($currentLanguage)
     setDocumentLanguage()
+    applyDirection($currentLanguage)
   })
 </script>
 
