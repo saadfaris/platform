@@ -35,6 +35,9 @@
 @use "./mono.scss" as *;
 @use "./noto-color.scss" as *;
 
+@use "./_rtl.scss" as *;
+@use "./_fonts-arabic.scss" as *;
+
 @font-face {
   font-family: 'IBM Plex Sans';
   font-style: normal;

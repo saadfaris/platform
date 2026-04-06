@@ -34,7 +34,7 @@
 
   table.proseTable td:not(:last-child),
   table.proseTable th:not(:last-child) {
-    border-right: none !important;
+    border-inline-end: none !important;
   }
 
   table.proseTable tr:not(:last-child) td,
@@ -84,7 +84,7 @@ table.proseTable {
   }
 
   th {
-    text-align: left;
+    text-align: start;
     background-color: var(--text-editor-table-header-color);
   }
 
@@ -118,11 +118,11 @@ table.proseTable {
       }
 
       &__border-left::before {
-        border-left-width: var(--table-selection-border-width);
+        border-inline-start-width: var(--table-selection-border-width);
       }
 
       &__border-right::before {
-        border-right-width: var(--table-selection-border-width);
+        border-inline-end-width: var(--table-selection-border-width);
       }
     }
 
@@ -252,7 +252,7 @@ table.proseTable {
           bottom: 0;
           left: 0;
           right: 0;
-          border-right-width: 0;
+          border-inline-end-width: 0;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
         }
@@ -338,7 +338,7 @@ table.proseTable {
           content: '';
           border: 2px solid var(--text-editor-table-marker-color);
           border-radius: 50%;
-          margin-left: calc(0.5rem - 1px);
+          margin-inline-start: calc(0.5rem - 1px);
         }
 
         svg {
@@ -432,10 +432,10 @@ table.proseTable {
 
 .proseBlockQuote {
   margin-inline: 1px 0;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
+  padding-inline-start: 1.5em;
+  padding-inline-end: 1.5em;
   position: relative;
-  border-left: 2px solid var(--text-editor-block-quote-color);
+  border-inline-start: 2px solid var(--text-editor-block-quote-color);
 }
 
 .proseCode {

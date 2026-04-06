@@ -1,0 +1,17 @@
+//
+// IBM Plex Sans Arabic — temporary Arabic UI font.
+//
+// Loaded from Google Fonts CDN. Self-host later for offline support and to
+// avoid a third-party request on first paint (see RTL_SETUP.md).
+//
+// The font stack is only swapped in when the document is RTL, so English
+// typography is preserved exactly as before.
+//
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+html[dir='rtl'],
+html[dir='rtl'] body {
+  font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}

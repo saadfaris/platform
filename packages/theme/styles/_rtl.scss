@@ -1,0 +1,37 @@
+//
+// Copyright © 2026 Anticrm Platform Contributors.
+//
+// RTL helpers
+//
+// Most direction-sensitive layout is handled by CSS logical properties
+// (margin-inline-*, padding-inline-*, inset-inline-*, text-align: start/end,
+// border-inline-*) so the UI mirrors automatically when <html dir="rtl">.
+//
+// This file contains the few utilities that *cannot* be expressed with
+// logical properties:
+//   1. .flip-rtl  - mirrors a directional icon (chevrons, back arrows, etc.)
+//                   only when the document is RTL.
+//   2. transform overrides for components that translate horizontally and
+//      need to flip sign in RTL.
+//
+// Do NOT add a global "flip everything" rule here. Icons whose meaning is
+// not direction-sensitive (search, settings cog, plus, trash, ...) must keep
+// their original orientation.
+//
+
+// Mirror a directional icon only when the document is RTL.
+// Apply with `class:flip-rtl` on chevrons, back/forward arrows, list-arrow
+// indicators in breadcrumbs, submenu carets, etc.
+.flip-rtl {
+  // No-op in LTR.
+}
+
+html[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+// Some inline SVGs use viewBox-based rendering and need explicit transform
+// origin to mirror cleanly without shifting their bounding box.
+html[dir='rtl'] .flip-rtl svg {
+  transform-origin: center;
+}
