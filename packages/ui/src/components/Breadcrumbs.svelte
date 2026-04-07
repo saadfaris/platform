@@ -32,7 +32,7 @@
 
 <div class="hulyBreadcrumbs-container {size}">
   {#each items as item, i}
-    {#if i !== 0}<ChevronRight size={'small'} />{/if}
+    {#if i !== 0}<span class="flip-rtl"><ChevronRight size={'small'} /></span>{/if}
     <Breadcrumb
       {...item}
       {size}

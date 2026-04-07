@@ -1,0 +1,12 @@
+{
+  "string": {
+    "Rating": "التقييم",
+    "RatingWidget": "أداة التقييم",
+    "RatingWidgetEmpty": "لا توجد مستندات مميزة حتى الآن. لعرض العناصر هنا، أضف نجمة لأي مستند.",
+    "Level": "المستوى",
+    "MonthOps": "{month}: {ops} عمليات",
+    "MonthNoOps": "{month}، لا توجد عمليات",
+    "AddStar": "إضافة نجمة",
+    "AddStarAria": "إضافة تفاعل نجمة"
+  }
+}

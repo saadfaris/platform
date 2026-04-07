@@ -1,0 +1,30 @@
+{
+  "status": {
+    "LoadingPlugin": "جارٍ تحميل الإضافة {plugin}...",
+    "UnknownError": "خطأ غير معروف: {message}",
+    "InvalidId": "معرّف غير صالح: {id}",
+    "BadRequest": "طلب غير صالح",
+    "Forbidden": "غير مسموح",
+    "Conflict": "تعارض",
+    "ExpiredLink": "رابط الدعوة منتهي الصلاحية",
+    "Unauthorized": "غير مصرح",
+    "UnknownMethod": "طريقة غير معروفة: {method}",
+    "InternalServerError": "خطأ في الخادم",
+    "MaintenanceWarning": "الصيانة مجدولة خلال",
+    "MaintenanceWarningTime": "{time, plural, =1 {أقل من دقيقة} other {# دقائق}}",
+    "AccountNotFound": "الحساب غير موجود أو بيانات الدخول غير صحيحة",
+    "AccountNotConfirmed": "لم يتم تأكيد الحساب",
+    "WorkspaceNotFound": "مساحة العمل غير موجودة",
+    "AccountAlreadyExists": "الحساب موجود مسبقًا",
+    "WorkspaceRateLimit": "الخادم مشغول، يرجى المحاولة لاحقًا",
+    "AccountAlreadyConfirmed": "تم تأكيد الحساب مسبقًا",
+    "WorkspaceAlreadyExists": "مساحة العمل موجودة مسبقًا",
+    "InvalidOtp": "رمز غير صالح",
+    "PasswordLoginLocked": "تم قفل تسجيل الدخول بكلمة المرور بسبب محاولات فاشلة كثيرة. استخدم رمز تحقق (OTP) لفتح الحساب.",
+    "InviteNotFound": "لم يتم العثور على دعوة بالبريد: {email}",
+    "WorkspaceLimitReached": "تم الوصول للحد الأقصى لمساحات العمل، يرجى التواصل معنا...",
+    "ReadOnlyAccount": "حساب تجريبي للعرض فقط",
+    "SystemAccount": "حساب النظام",
+    "SocialIdAlreadyExists": "معرّف التواصل موجود مسبقًا"
+  }
+}

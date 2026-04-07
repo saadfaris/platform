@@ -1,0 +1,64 @@
+{
+  "string": {
+    "Document": "مستند",
+    "ParentDocument": "المستند الرئيسي",
+    "ChildDocument": "مستند فرعي",
+    "CreateDocument": "إنشاء مستند",
+    "Documents": "المستندات",
+    "CreateAnVersion": "إنشاء إصدار جديد",
+    "DocumentNamePlaceholder": "بدون عنوان",
+    "Name": "الاسم",
+    "Cancel": "إلغاء",
+    "Version": "الإصدار",
+    "SearchDocument": "ابحث عن مستند...",
+    "Snapshot": "لقطة",
+    "NoVersions": "لا توجد إصدارات",
+    "DocumentApplication": "المستندات",
+    "MyDocuments": "مستنداتي",
+    "Teamspace": "مساحة الفريق",
+    "Teamspaces": "مساحات الفريق",
+    "Labels": "الوسوم",
+    "AddLabel": "إضافة وسم",
+    "Authors": "المؤلفون",
+    "Backlinks": "روابط مرتبطة",
+    "History": "السجل",
+    "DescriptionPlaceholder": "اكتب التفاصيل...",
+    "CreateTeamspace": "إنشاء مساحة فريق",
+    "EditTeamspace": "تعديل مساحة الفريق",
+    "NewTeamspace": "مساحة فريق جديدة",
+    "TeamspaceTitle": "اسم مساحة الفريق",
+    "TeamspaceTitlePlaceholder": "مساحة فريق جديدة",
+    "TeamspaceDescriptionPlaceholder": "أضف وصف...",
+    "ChooseIcon": "اختر أيقونة",
+    "TeamspaceMembers": "الأعضاء",
+    "NoParentDocument": "لا يوجد مستند رئيسي",
+    "NoBacklinks": "لا توجد روابط مرتبطة",
+    "NoHistory": "لا يوجد سجل سابق",
+    "Untitled": "بدون عنوان",
+
+    "Description": "الوصف",
+
+    "CopyDocumentUrl": "نسخ رابط المستند",
+    "DocumentUrlCopied": "تم النسخ",
+
+    "ViewMode": "عرض",
+    "EditMode": "تعديل",
+    "SuggestMode": "اقتراح",
+
+    "CompareTo": "مقارنة مع...",
+    "Star": "تمييز",
+    "Unstar": "إلغاء التمييز",
+
+    "Lock": "قفل",
+    "Unlock": "إلغاء القفل",
+    "Locked": "مقفل",
+
+    "ConfigLabel": "المستندات",
+    "ConfigDescription": "إضافة لتحرير المستندات بشكل تعاوني",
+
+    "Icon": "أيقونة",
+    "Color": "لون",
+    "ForbidCreateTeamspacePermission": "منع إنشاء مساحة فريق",
+    "ForbidCreateTeamspacePermissionDescription": "منع المستخدمين من إنشاء مساحات فريق جديدة"
+  }
+}

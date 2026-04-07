@@ -1,0 +1,25 @@
+{
+  "string": {
+    "Requests": "الطلبات",
+    "Request": "طلب",
+    "Approve": "موافقة",
+    "Approved": "تمت الموافقة",
+    "CreatedRequest": "تم إنشاء ",
+    "For": "لـ",
+    "Change": "تغيير",
+    "Add": "إضافة",
+    "Remove": "إزالة",
+    "Status": "الحالة",
+    "Requested": "تم الطلب",
+    "Completed": "مكتمل",
+    "Reject": "رفض",
+    "Rejected": "تم الرفض",
+    "Comment": "تعليق",
+    "PleaseTypeMessage": "يرجى كتابة تعليق للمتابعة...",
+    "NoRequests": "لا توجد طلبات",
+    "Cancel": "إلغاء",
+    "Cancelled": "ملغي",
+    "NewRequest": "طلب جديد",
+    "CancelRequest": "إلغاء الطلب"
+  }
+}

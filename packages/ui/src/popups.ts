@@ -15,6 +15,29 @@ import type {
 import { Analytics } from '@hcengineering/analytics'
 import { modalStore } from './modals'
 
+/**
+ * @public
+ * True when the document is currently rendered right-to-left.
+ * Used by popup positioning helpers to mirror viewport-anchored popups.
+ */
+export function isRTL (): boolean {
+  return typeof document !== 'undefined' && document.documentElement.dir === 'rtl'
+}
+
+/**
+ * Swap `left` and `right` style values in-place. Used to mirror
+ * viewport-anchored popups when the document direction is RTL.
+ *
+ * Trigger-anchored popups (computed from getBoundingClientRect coordinates)
+ * are NOT mirrored here because their pixel math is direction-agnostic.
+ */
+function swapInlineEdges (newProps: Record<string, string | number>): void {
+  const left = newProps.left
+  const right = newProps.right
+  newProps.left = right ?? ''
+  newProps.right = left ?? ''
+}
+
 export interface CompAndProps {
   type?: 'popup'
   id: string
@@ -195,9 +218,23 @@ export function fitPopupPositionedElement (
   newProps.left = newProps.right = newProps.top = newProps.bottom = ''
   newProps.maxHeight = newProps.height = ''
   newProps.maxWidth = newProps.width = ''
+  const rtl = isRTL()
   if (alignment?.kind === 'submenu') {
-    const dirH =
-      docWidth - rect.right - rectPopup.width - 12 > 0 ? 'right' : rect.left > docWidth - rect.left ? 'left' : 'inside'
+    // Preferred opening side for a submenu: in LTR open toward the right
+    // (inline-end), in RTL open toward the left (inline-end is the visual
+    // left). The viewport math still keeps it on screen if the preferred
+    // side has no room.
+    const dirH = rtl
+      ? rect.left - rectPopup.width - 12 > 0
+        ? 'left'
+        : docWidth - rect.right > rect.left
+          ? 'right'
+          : 'inside'
+      : docWidth - rect.right - rectPopup.width - 12 > 0
+        ? 'right'
+        : rect.left > docWidth - rect.left
+          ? 'left'
+          : 'inside'
     const dirV =
       docHeight - rect.top - rectPopup.height - 20 > 0
         ? 'bottom'
@@ -217,9 +254,18 @@ export function fitPopupPositionedElement (
       newProps.top = `${rect.bottom - rectPopup.height}px`
     }
 
-    if (alignment.position.h === 'right') {
+    // In RTL the caller's notion of "right" means inline-end which is
+    // visually the left side of the screen, so the anchor flips.
+    const requestedH = rtl
+      ? alignment.position.h === 'right'
+        ? 'left'
+        : alignment.position.h === 'left'
+          ? 'right'
+          : alignment.position.h
+      : alignment.position.h
+    if (requestedH === 'right') {
       newProps.left = `${rect.right + 4}px`
-    } else if (alignment.position.h === 'left') {
+    } else if (requestedH === 'left') {
       newProps.left = `${rect.left - rectPopup.width - 4}px`
     }
     direction = alignment.position.v + '|' + alignment.position.h
@@ -431,9 +477,37 @@ export function fitPopupElement (
     }
     show = true
   }
+  // Mirror viewport-anchored popups in RTL. These elements pin themselves
+  // to a corner of the viewport (logo, account, notify, status, ...) so a
+  // simple left/right swap is the correct visual mirror. Trigger-anchored
+  // popups (handled by fitPopupPositionedElement above) are not touched
+  // here because their math is already direction-agnostic.
+  if (
+    isRTL() &&
+    typeof element === 'string' &&
+    VIEWPORT_ANCHORED_POPUPS.has(element)
+  ) {
+    swapInlineEdges(newProps)
+  }
   // applyStyle(newProps, modalHTML)
   return { props: newProps, showOverlay: show, direction: '' }
 }
+
+const VIEWPORT_ANCHORED_POPUPS = new Set<string>([
+  'right',
+  'float',
+  'logo',
+  'logo-mini',
+  'logo-portrait',
+  'account',
+  'account-portrait',
+  'account-mobile',
+  'notify',
+  'notify-mobile',
+  'help-center',
+  'status',
+  'movable'
+])
 
 export function eventToHTMLElement (evt: MouseEvent | TouchEvent): HTMLElement {
   return evt.target as HTMLElement

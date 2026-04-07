@@ -2,12 +2,33 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
 }
 
 @mixin bg-layer($color, $opacity) {
   @include bg-fullsize;
   background: $color;
   opacity: $opacity;
+}
+
+// --- RTL-friendly inline spacing helpers ---
+//
+// Use these mixins instead of margin-left/right or padding-left/right when
+// the spacing follows the *reading direction* (most cases). Physical
+// properties should only be used for visual offsets that must NOT mirror.
+
+@mixin margin-inline($start, $end: $start) {
+  margin-inline-start: $start;
+  margin-inline-end: $end;
+}
+
+@mixin padding-inline($start, $end: $start) {
+  padding-inline-start: $start;
+  padding-inline-end: $end;
+}
+
+@mixin inset-inline($start, $end: auto) {
+  inset-inline-start: $start;
+  inset-inline-end: $end;
 }

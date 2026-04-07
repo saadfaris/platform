@@ -1,0 +1,19 @@
+{
+  "string": {
+    "Channel": "قناة",
+    "Channels": "القنوات",
+    "Chat": "الدردشة",
+    "Description": "الوصف",
+    "Loading": "جارٍ التحميل...",
+    "MessageIn": "رسالة #{title}",
+    "Thread": "محادثة",
+    "Threads": "المحادثات",
+    "Title": "العنوان",
+    "All": "كل التحديثات",
+    "Inbox": "الوارد",
+    "ReactedToYourMessage": "تفاعل مع رسالتك",
+    "ClearAll": "مسح الكل",
+    "InboxIsClear": "الوارد فارغ",
+    "YouDontHaveAnyNewMessages": "ما عندك رسائل جديدة"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "string": {
+    "ShowNotifications": "عرض الإشعارات",
+    "PlaySound": "تشغيل الصوت",
+    "BounceAppIcon": "اهتزاز أيقونة التطبيق (ماك فقط)",
+    "ShowBadge": "عرض شارة على أيقونة التطبيق",
+    "SoundAndAppearance": "الصوت والمظهر",
+    "HaveGotANotification": "لديك إشعار",
+    "TotalNotificationsCount": "لديك {count, plural, =1 {# إشعار} other {# إشعارات}}"
+  }
+}

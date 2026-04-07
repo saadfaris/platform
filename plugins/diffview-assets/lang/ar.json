@@ -1,0 +1,14 @@
+{
+  "string": {
+    "ViewMode": "وضع العرض",
+    "Unified": "موحد",
+    "Split": "مقسّم",
+    "Viewed": "تمت المشاهدة",
+    "ShowDiff": "عرض التغييرات",
+    "NoChanges": "لا توجد تغييرات في الملف",
+    "LargeDiffsAreHidden": "التغييرات الكبيرة مخفية افتراضيًا",
+    "FileIsTooLarge": "الملف كبير جدًا ولا يمكن عرضه",
+    "FileWasRenamed": "تمت إعادة تسمية الملف بدون تغييرات",
+    "FileWasDeleted": "تم حذف الملف"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "string": {
+    "GlobalProfile": "الملف الشخصي العام",
+    "EditProfile": "تعديل الملف الشخصي",
+    "GeneralInformation": "المعلومات العامة",
+    "FirstName": "الاسم الأول",
+    "LastName": "اسم العائلة",
+    "City": "المدينة",
+    "Country": "الدولة",
+    "Bio": "نبذة",
+    "FirstNamePlaceholder": "أدخل الاسم الأول",
+    "LastNamePlaceholder": "أدخل اسم العائلة",
+    "CityPlaceholder": "أدخل المدينة",
+    "CountryPlaceholder": "أدخل الدولة",
+    "BioPlaceholder": "عرّف بنفسك...",
+    "Save": "حفظ",
+    "Cancel": "إلغاء",
+    "MaximumLength": "الحد الأقصى {count} حرف",
+    "Required": "هذا الحقل مطلوب",
+    "ProfileVisibility": "خصوصية الملف الشخصي",
+    "PublicProfile": "عام",
+    "PrivateProfile": "خاص",
+    "PublicProfileDescription": "ملفك الشخصي متاح للجميع",
+    "PrivateProfileDescription": "ملفك الشخصي متاح لك فقط",
+    "AddBioPlaceholder": "أضف نبذة عنك...",
+    "AddLocationPlaceholder": "أضف موقعك...",
+    "ProfileNotAvailable": "الملف الشخصي غير متاح"
+  }
+}

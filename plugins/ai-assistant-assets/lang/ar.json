@@ -1,0 +1,13 @@
+{
+  "string": {
+    "IntegrationLabel": "المساعد الذكي",
+    "IntegrationDescription": "مساعد ذكي يساعدك في تنظيم وأتمتة وتسهيل عملك اليومي داخل المنصة",
+    "ConfigLabel": "المساعد الذكي",
+    "ConfigDescription": "مساعد ذكي يعمل بالذكاء الاصطناعي",
+    "Connect": "ربط",
+    "Cancel": "إلغاء",
+    "Status": "الحالة",
+    "FailedToConnect": "خدمة المساعد الذكي غير متاحة",
+    "Configure": "إعداد المساعد الذكي"
+  }
+}

@@ -55,7 +55,7 @@
       align-items: center;
       min-width: 0;
 
-      & > *:not(:last-child) { margin-right: .5rem; }
+      & > *:not(:last-child) { margin-inline-end: .5rem; }
     }
     &__title {
       overflow: hidden;
@@ -155,8 +155,8 @@
       align-items: center;
       margin: 1rem 1.5rem;
 
-      & > * { margin-right: 1rem; }
-      & > *:last-child { margin-right: 1.5rem; }
+      & > * { margin-inline-end: 1rem; }
+      & > *:last-child { margin-inline-end: 1.5rem; }
     }
   }
   .antiCard-block { padding: 1.5rem; }
@@ -178,7 +178,7 @@
     &__error {
       flex-grow: 1;
       display: flex;
-      margin-left: .375rem;
+      margin-inline-start: .375rem;
       min-width: 0;
       font-weight: 500;
       font-size: .75rem;
@@ -204,7 +204,7 @@
       &:hover { background-color: var(--theme-popup-hover); }
     }
     span {
-      margin-right: .5rem;
+      margin-inline-end: .5rem;
       color: var(--theme-caption-color);
     }
   }
@@ -231,7 +231,7 @@
       .label {
         display: flex;
         align-items: center;
-        text-align: left;
+        text-align: start;
         font-weight: 500;
         font-size: .75rem;
         line-height: .75rem;

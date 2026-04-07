@@ -1,0 +1,223 @@
+# Builds the customised pods/front Docker image (the Huly SPA + Express
+# wrapper) and pushes it to GitHub Container Registry. The other Huly
+# services (transactor, account, collaborator, ...) are not rebuilt — this
+# fork only changes the frontend (theme, ui, locale files).
+#
+# Output: ghcr.io/<owner>/platform-front:<tag>
+#
+# Tags produced on every successful build:
+#   - rtl-latest               (always points at the newest build)
+#   - rtl-<short-sha>          (immutable)
+#   - rtl-<branch>             (e.g. rtl-claude-prepare-platform-fork-pyRW4)
+#
+# To deploy on Railway:
+#   1. Make the GHCR package public, OR add a Private Registry credential
+#      in Railway with a GitHub PAT (read:packages scope).
+#   2. Open the Frontend service → Settings → Source → Image and set it to
+#      ghcr.io/<owner>/platform-front:rtl-latest
+#   3. Keep all existing env vars (ACCOUNTS_URL, COLLABORATOR_URL, MINIO_*,
+#      SERVER_SECRET, MODEL_VERSION, VERSION, ...).
+#   4. Redeploy.
+#
+# IMPORTANT: the SPA refuses to load (or gets stuck on the workspace
+# migration screen) if its baked-in MODEL_VERSION does not match the
+# running backend's INTERNAL version. The default below pins it to
+# 0.7.326, matching the version the backend pods actually report at
+# runtime (NOT the s0.7.330 docker image tag — Huly's image tags
+# don't always match the code's MODEL_VERSION constant). When you
+# upgrade the backend, run this workflow manually (Actions → Build
+# Frontend Image → Run workflow) and pass the new version as the
+# model_version input.
+
+name: Build Frontend Image (RTL fork)
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - claude/prepare-platform-fork-pyRW4
+    paths:
+      - 'packages/**'
+      - 'plugins/**'
+      - 'dev/prod/**'
+      - 'pods/front/**'
+      - 'foundations/**'
+      - 'models/**'
+      - 'common/**'
+      - 'rush.json'
+      - '.github/workflows/build-frontend.yml'
+  workflow_dispatch:
+    inputs:
+      model_version:
+        description: 'INTERNAL MODEL_VERSION of the running backend (NOT the docker image tag — Huly s/v image tags can lie). Verified at 0.7.326 for the user stack via the workspace pod creating new workspaces at that exact version, even though the image tag is s0.7.330.'
+        required: false
+        default: '0.7.326'
+      tag_suffix:
+        description: 'Extra tag suffix (optional, e.g. "preview")'
+        required: false
+        default: ''
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/platform-front
+  # The version baked into the frontend bundle MUST equal the running
+  # backend's INTERNAL MODEL_VERSION, otherwise the SPA prints either
+  # "Front version X is not in sync with server version Y" or gets
+  # stuck on the workspace migration screen forever.
+  #
+  # The internal MODEL_VERSION is NOT the docker image tag. The user's
+  # stack uses hardcoreeng/*:s0.7.330 across all backend services, but
+  # the actual code inside those images reports MODEL_VERSION = 0.7.326.
+  # Evidence:
+  #   * Workspace pod startup log: "for version: 0.7.326"
+  #   * Brand new workspaces are CREATED at version 0.7.326
+  #   * Migration screen never resolves because workspace pod can't
+  #     produce a version higher than its own internal constant.
+  #
+  # Override via workflow_dispatch when the backend is genuinely
+  # upgraded (i.e. when a new image tag actually contains code with
+  # a different MODEL_VERSION).
+  MODEL_VERSION_DEFAULT: '0.7.326'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Pin model version (must match running backend)
+        # show_version.js / show_tag.js are invoked by common/scripts/esbuild.js
+        # at bundle time. show_version.js does `git describe --tags --abbrev=0`
+        # first; if that fails it falls back to "0.6.0", which causes the SPA
+        # to refuse the connection with the production backend. We force the
+        # right version by (1) writing common/scripts/version.txt and (2)
+        # creating a matching local lightweight git tag so describe succeeds.
+        run: |
+          MV="${{ github.event.inputs.model_version }}"
+          if [ -z "$MV" ]; then
+            MV="${MODEL_VERSION_DEFAULT}"
+          fi
+          echo "Pinning MODEL_VERSION = $MV"
+          # version.txt is read with JSON.parse-style quoting in show_version.js,
+          # so the file content must include the surrounding quotes.
+          printf '"%s"' "$MV" > common/scripts/version.txt
+          cat common/scripts/version.txt
+          echo
+          # show_tag.js parses `git describe --tags`. Create a local tag so it
+          # returns the same version. Local-only; never pushed.
+          git -c user.email=ci@local -c user.name=ci tag -f "v${MV}"
+          git describe --tags --abbrev=0
+          echo "PINNED_MODEL_VERSION=$MV" >> "$GITHUB_ENV"
+
+      - name: Cache Rush common/temp
+        uses: actions/cache@v4
+        with:
+          path: |
+            common/temp/install-run
+            common/temp/pnpm-store
+          key: ${{ runner.os }}-rush-${{ hashFiles('common/config/rush/pnpm-lock.yaml', 'rush.json') }}
+          restore-keys: |
+            ${{ runner.os }}-rush-
+
+      - name: Rush install
+        run: node common/scripts/install-run-rush.js install
+
+      - name: Rush build (only what pod-front needs)
+        run: node common/scripts/install-run-rush.js build --to @hcengineering/pod-front
+
+      - name: Rush bundle (only what pod-front needs)
+        env:
+          NODE_ENV: production
+        run: node common/scripts/install-run-rush.js bundle --to @hcengineering/pod-front
+
+      - name: Rush package (only what pod-front needs)
+        env:
+          NODE_ENV: production
+        run: node common/scripts/install-run-rush.js package --to @hcengineering/pod-front
+
+      - name: Sanity check build artefacts
+        run: |
+          echo "::group::pods/front contents"
+          ls -la pods/front
+          echo "::endgroup::"
+          echo "::group::pods/front/bundle"
+          ls -la pods/front/bundle || (echo "bundle/ missing — esbuild step did not run" && exit 1)
+          echo "::endgroup::"
+          echo "::group::pods/front/dist"
+          ls -la pods/front/dist | head -20 || (echo "dist/ missing — package step did not run" && exit 1)
+          echo "::endgroup::"
+          test -f pods/front/bundle/bundle.js
+          test -d pods/front/dist
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute image tags
+        id: tags
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          SUFFIX="${{ github.event.inputs.tag_suffix }}"
+
+          TAGS="${IMAGE_NAME}:rtl-latest"
+          TAGS="$TAGS,${IMAGE_NAME}:rtl-${SHORT_SHA}"
+          TAGS="$TAGS,${IMAGE_NAME}:rtl-${BRANCH}"
+          if [ -n "$SUFFIX" ]; then
+            TAGS="$TAGS,${IMAGE_NAME}:rtl-${SUFFIX}"
+          fi
+
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+          echo "Computed tags:"
+          echo "$TAGS" | tr ',' '\n'
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: pods/front
+          file: pods/front/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          {
+            echo "## Frontend image built"
+            echo ""
+            echo "**Tags pushed to GHCR:**"
+            echo ""
+            echo '${{ steps.tags.outputs.tags }}' | tr ',' '\n' | sed 's/^/- `/' | sed 's/$/`/'
+            echo ""
+            echo "### Next steps in Railway"
+            echo ""
+            echo "1. Open the **Frontend** service."
+            echo "2. **Settings → Source → Image** → set to:"
+            echo "   \`${IMAGE_NAME}:rtl-latest\`"
+            echo "3. If the GHCR package is private, add a Private Registry credential with a GitHub PAT (\`read:packages\` scope)."
+            echo "4. Keep existing env vars and redeploy."
+          } >> "$GITHUB_STEP_SUMMARY"

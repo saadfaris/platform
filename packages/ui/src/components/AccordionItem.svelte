@@ -85,7 +85,7 @@
       class:withIcon={size === 'medium' && icon !== undefined}
     >
       {#if size === 'large' && !disabled}
-        <div class="hulyAccordionItem-header__chevron">
+        <div class="hulyAccordionItem-header__chevron flip-rtl">
           <Icon icon={IconChevronRight} size={'small'} />
         </div>
       {/if}

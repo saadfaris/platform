@@ -1,0 +1,21 @@
+{
+  "string": {
+    "Cancel": "إلغاء",
+    "Templates": "القوالب النصية",
+    "TemplatesHeader": "القوالب النصية",
+    "CreateTemplate": "إنشاء قالب",
+    "SaveTemplate": "حفظ القالب",
+    "EditTemplate": "تعديل القالب",
+    "ViewTemplate": "عرض القالب",
+    "Suggested": "مقترح",
+    "SearchTemplate": "ابحث عن قالب",
+    "TemplatePlaceholder": "قالب جديد",
+    "Title": "العنوان",
+    "Message": "النص",
+    "Field": "حقل",
+    "TemplateCategory": "مجموعة القوالب",
+    "CreateTemplateCategory": "إنشاء مجموعة",
+    "Copy": "نسخ",
+    "Template": "قالب"
+  }
+}
