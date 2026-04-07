@@ -20,10 +20,12 @@
 #   4. Redeploy.
 #
 # IMPORTANT: the SPA refuses to load if its baked-in MODEL_VERSION does
-# not match the running backend's version. The default below pins it to
-# 0.7.330. When you upgrade the backend, run this workflow manually
-# (Actions → Build Frontend Image → Run workflow) and pass the new
-# version as the model_version input.
+# not match the running backend's INTERNAL version (which can differ
+# from the docker image tag). The default below pins it to 0.7.326,
+# matching what the user's workspace pod reports at startup. When you
+# upgrade the backend, run this workflow manually (Actions → Build
+# Frontend Image → Run workflow) and pass the new version as the
+# model_version input.
 
 name: Build Frontend Image (RTL fork)
 
@@ -52,9 +54,9 @@ on:
   workflow_dispatch:
     inputs:
       model_version:
-        description: 'Model/server version this frontend image must be in sync with (e.g. 0.7.330). MUST match the running backend or the SPA will refuse to load.'
+        description: 'Model/server version this frontend image must be in sync with (e.g. 0.7.326). MUST match the running backend or the SPA will refuse to load. Note: this is the internal MODEL_VERSION the backend pods report at runtime, NOT the docker image tag (Huly s/v image tags often differ from the internal version).'
         required: false
-        default: '0.7.330'
+        default: '0.7.326'
       tag_suffix:
         description: 'Extra tag suffix (optional, e.g. "preview")'
         required: false
@@ -63,10 +65,16 @@ on:
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/platform-front
   # The version baked into the frontend bundle MUST equal the running
-  # backend's MODEL_VERSION, otherwise the SPA prints
+  # backend's INTERNAL MODEL_VERSION (not the docker image tag — Huly's
+  # s/v image tags can differ from the internal version reported by the
+  # workspace/transactor pods at runtime). If they mismatch the SPA prints
   # "Front version X is not in sync with server version Y" and refuses to
   # load. Override via workflow_dispatch when the backend is upgraded.
-  MODEL_VERSION_DEFAULT: '0.7.330'
+  #
+  # Verified for the user's stack via the workspace pod startup log:
+  #   "Starting workspace service ... for version: 0.7.326"
+  # Even though the image tag is hardcoreeng/workspace:s0.7.330.
+  MODEL_VERSION_DEFAULT: '0.7.326'
 
 jobs:
   build:
