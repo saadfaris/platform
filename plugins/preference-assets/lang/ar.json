@@ -1,7 +1,7 @@
 {
   "string": {
-    "Starred": "Starred",
-    "Star": "Star",
-    "Unstar": "Unstar"
+    "Starred": "المفضلة",
+    "Star": "إضافة للمفضلة",
+    "Unstar": "إزالة من المفضلة"
   }
 }
