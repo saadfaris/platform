@@ -18,6 +18,12 @@
 #   3. Keep all existing env vars (ACCOUNTS_URL, COLLABORATOR_URL, MINIO_*,
 #      SERVER_SECRET, MODEL_VERSION, VERSION, ...).
 #   4. Redeploy.
+#
+# IMPORTANT: the SPA refuses to load if its baked-in MODEL_VERSION does
+# not match the running backend's version. The default below pins it to
+# 0.7.330. When you upgrade the backend, run this workflow manually
+# (Actions → Build Frontend Image → Run workflow) and pass the new
+# version as the model_version input.
 
 name: Build Frontend Image (RTL fork)
 
@@ -45,6 +51,10 @@ on:
       - '.github/workflows/build-frontend.yml'
   workflow_dispatch:
     inputs:
+      model_version:
+        description: 'Model/server version this frontend image must be in sync with (e.g. 0.7.330). MUST match the running backend or the SPA will refuse to load.'
+        required: false
+        default: '0.7.330'
       tag_suffix:
         description: 'Extra tag suffix (optional, e.g. "preview")'
         required: false
@@ -52,10 +62,11 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/platform-front
-  # Used by pods/front/src/__start.ts and the esbuild --define flags. The
-  # values mirror what `rush docker` injects in the official build.
-  MODEL_VERSION: '0.7.343'
-  VERSION: '0.7.343'
+  # The version baked into the frontend bundle MUST equal the running
+  # backend's MODEL_VERSION, otherwise the SPA prints
+  # "Front version X is not in sync with server version Y" and refuses to
+  # load. Override via workflow_dispatch when the backend is upgraded.
+  MODEL_VERSION_DEFAULT: '0.7.330'
 
 jobs:
   build:
@@ -71,6 +82,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
+
+      - name: Pin model version (must match running backend)
+        # show_version.js / show_tag.js are invoked by common/scripts/esbuild.js
+        # at bundle time. show_version.js does `git describe --tags --abbrev=0`
+        # first; if that fails it falls back to "0.6.0", which causes the SPA
+        # to refuse the connection with the production backend. We force the
+        # right version by (1) writing common/scripts/version.txt and (2)
+        # creating a matching local lightweight git tag so describe succeeds.
+        run: |
+          MV="${{ github.event.inputs.model_version }}"
+          if [ -z "$MV" ]; then
+            MV="${MODEL_VERSION_DEFAULT}"
+          fi
+          echo "Pinning MODEL_VERSION = $MV"
+          # version.txt is read with JSON.parse-style quoting in show_version.js,
+          # so the file content must include the surrounding quotes.
+          printf '"%s"' "$MV" > common/scripts/version.txt
+          cat common/scripts/version.txt
+          echo
+          # show_tag.js parses `git describe --tags`. Create a local tag so it
+          # returns the same version. Local-only; never pushed.
+          git -c user.email=ci@local -c user.name=ci tag -f "v${MV}"
+          git describe --tags --abbrev=0
+          echo "PINNED_MODEL_VERSION=$MV" >> "$GITHUB_ENV"
 
       - name: Cache Rush common/temp
         uses: actions/cache@v4
