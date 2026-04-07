@@ -1,0 +1,171 @@
+# Builds the customised pods/front Docker image (the Huly SPA + Express
+# wrapper) and pushes it to GitHub Container Registry. The other Huly
+# services (transactor, account, collaborator, ...) are not rebuilt — this
+# fork only changes the frontend (theme, ui, locale files).
+#
+# Output: ghcr.io/<owner>/platform-front:<tag>
+#
+# Tags produced on every successful build:
+#   - rtl-latest               (always points at the newest build)
+#   - rtl-<short-sha>          (immutable)
+#   - rtl-<branch>             (e.g. rtl-claude-prepare-platform-fork-pyRW4)
+#
+# To deploy on Railway:
+#   1. Make the GHCR package public, OR add a Private Registry credential
+#      in Railway with a GitHub PAT (read:packages scope).
+#   2. Open the Frontend service → Settings → Source → Image and set it to
+#      ghcr.io/<owner>/platform-front:rtl-latest
+#   3. Keep all existing env vars (ACCOUNTS_URL, COLLABORATOR_URL, MINIO_*,
+#      SERVER_SECRET, MODEL_VERSION, VERSION, ...).
+#   4. Redeploy.
+
+name: Build Frontend Image (RTL fork)
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - claude/prepare-platform-fork-pyRW4
+    paths:
+      - 'packages/**'
+      - 'plugins/**'
+      - 'dev/prod/**'
+      - 'pods/front/**'
+      - 'foundations/**'
+      - 'models/**'
+      - 'common/**'
+      - 'rush.json'
+      - '.github/workflows/build-frontend.yml'
+  workflow_dispatch:
+    inputs:
+      tag_suffix:
+        description: 'Extra tag suffix (optional, e.g. "preview")'
+        required: false
+        default: ''
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/platform-front
+  # Used by pods/front/src/__start.ts and the esbuild --define flags. The
+  # values mirror what `rush docker` injects in the official build.
+  MODEL_VERSION: '0.7.343'
+  VERSION: '0.7.343'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Cache Rush common/temp
+        uses: actions/cache@v4
+        with:
+          path: |
+            common/temp/install-run
+            common/temp/pnpm-store
+          key: ${{ runner.os }}-rush-${{ hashFiles('common/config/rush/pnpm-lock.yaml', 'rush.json') }}
+          restore-keys: |
+            ${{ runner.os }}-rush-
+
+      - name: Rush install
+        run: node common/scripts/install-run-rush.js install
+
+      - name: Rush build (only what pod-front needs)
+        run: node common/scripts/install-run-rush.js build --to @hcengineering/pod-front
+
+      - name: Rush bundle (only what pod-front needs)
+        env:
+          NODE_ENV: production
+        run: node common/scripts/install-run-rush.js bundle --to @hcengineering/pod-front
+
+      - name: Rush package (only what pod-front needs)
+        env:
+          NODE_ENV: production
+        run: node common/scripts/install-run-rush.js package --to @hcengineering/pod-front
+
+      - name: Sanity check build artefacts
+        run: |
+          echo "::group::pods/front contents"
+          ls -la pods/front
+          echo "::endgroup::"
+          echo "::group::pods/front/bundle"
+          ls -la pods/front/bundle || (echo "bundle/ missing — esbuild step did not run" && exit 1)
+          echo "::endgroup::"
+          echo "::group::pods/front/dist"
+          ls -la pods/front/dist | head -20 || (echo "dist/ missing — package step did not run" && exit 1)
+          echo "::endgroup::"
+          test -f pods/front/bundle/bundle.js
+          test -d pods/front/dist
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute image tags
+        id: tags
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          SUFFIX="${{ github.event.inputs.tag_suffix }}"
+
+          TAGS="${IMAGE_NAME}:rtl-latest"
+          TAGS="$TAGS,${IMAGE_NAME}:rtl-${SHORT_SHA}"
+          TAGS="$TAGS,${IMAGE_NAME}:rtl-${BRANCH}"
+          if [ -n "$SUFFIX" ]; then
+            TAGS="$TAGS,${IMAGE_NAME}:rtl-${SUFFIX}"
+          fi
+
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+          echo "Computed tags:"
+          echo "$TAGS" | tr ',' '\n'
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: pods/front
+          file: pods/front/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          {
+            echo "## Frontend image built"
+            echo ""
+            echo "**Tags pushed to GHCR:**"
+            echo ""
+            echo '${{ steps.tags.outputs.tags }}' | tr ',' '\n' | sed 's/^/- `/' | sed 's/$/`/'
+            echo ""
+            echo "### Next steps in Railway"
+            echo ""
+            echo "1. Open the **Frontend** service."
+            echo "2. **Settings → Source → Image** → set to:"
+            echo "   \`${IMAGE_NAME}:rtl-latest\`"
+            echo "3. If the GHCR package is private, add a Private Registry credential with a GitHub PAT (\`read:packages\` scope)."
+            echo "4. Keep existing env vars and redeploy."
+          } >> "$GITHUB_STEP_SUMMARY"
