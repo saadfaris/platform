@@ -1,13 +1,13 @@
 {
   "string": {
-    "IntegrationLabel": "AI Assistant",
-    "IntegrationDescription": "Your AI-powered personal assistant that helps organize, automate, and streamline your daily workflow across the platform",
-    "ConfigLabel": "AI Assistant",
-    "ConfigDescription": "AI-powered personal assistant",
-    "Connect": "Connect",
-    "Cancel": "Cancel",
-    "Status": "Status",
-    "FailedToConnect": "AI Assistant service is not available",
-    "Configure": "Configure AI Assistant"
+    "IntegrationLabel": "المساعد الذكي",
+    "IntegrationDescription": "مساعد ذكي يساعدك في تنظيم وأتمتة وتسهيل عملك اليومي داخل المنصة",
+    "ConfigLabel": "المساعد الذكي",
+    "ConfigDescription": "مساعد ذكي يعمل بالذكاء الاصطناعي",
+    "Connect": "ربط",
+    "Cancel": "إلغاء",
+    "Status": "الحالة",
+    "FailedToConnect": "خدمة المساعد الذكي غير متاحة",
+    "Configure": "إعداد المساعد الذكي"
   }
 }
