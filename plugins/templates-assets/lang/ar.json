@@ -1,21 +1,21 @@
 {
   "string": {
-    "Cancel": "Cancel",
-    "Templates": "Text Templates",
-    "TemplatesHeader": "TEXT TEMPLATES",
-    "CreateTemplate": "CREATE TEMPLATE",
-    "SaveTemplate": "Save template",
-    "EditTemplate": "Edit template",
-    "ViewTemplate": "View template",
-    "Suggested": "SUGGESTED",
-    "SearchTemplate": "search for template",
-    "TemplatePlaceholder": "New template",
-    "Title": "Title",
-    "Message": "Message",
-    "Field": "Field",
-    "TemplateCategory": "Template group",
-    "CreateTemplateCategory": "Create group",
-    "Copy": "Copy",
-    "Template": "Template"
+    "Cancel": "إلغاء",
+    "Templates": "القوالب النصية",
+    "TemplatesHeader": "القوالب النصية",
+    "CreateTemplate": "إنشاء قالب",
+    "SaveTemplate": "حفظ القالب",
+    "EditTemplate": "تعديل القالب",
+    "ViewTemplate": "عرض القالب",
+    "Suggested": "مقترح",
+    "SearchTemplate": "ابحث عن قالب",
+    "TemplatePlaceholder": "قالب جديد",
+    "Title": "العنوان",
+    "Message": "النص",
+    "Field": "حقل",
+    "TemplateCategory": "مجموعة القوالب",
+    "CreateTemplateCategory": "إنشاء مجموعة",
+    "Copy": "نسخ",
+    "Template": "قالب"
   }
 }
