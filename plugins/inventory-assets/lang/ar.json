@@ -1,25 +1,25 @@
 {
   "status": {
-    "CategoryRequired": "Category required",
-    "NameRequired": "Name required"
+    "CategoryRequired": "الفئة مطلوبة",
+    "NameRequired": "الاسم مطلوب"
   },
   "string": {
-    "Categories": "Categories",
-    "Category": "Category",
-    "CategoryCreateLabel": "Category",
-    "CreateCategory": "Create category",
-    "CreateSubcategory": "Create subcategory",
-    "Inventory": "Inventory",
-    "ProductCreateLabel": "Product",
-    "CreateProduct": "Create product",
-    "Products": "Products",
-    "Product": "Product",
-    "Variant": "Variant",
+    "Categories": "الفئات",
+    "Category": "فئة",
+    "CategoryCreateLabel": "فئة",
+    "CreateCategory": "إنشاء فئة",
+    "CreateSubcategory": "إنشاء فئة فرعية",
+    "Inventory": "المخزون",
+    "ProductCreateLabel": "منتج",
+    "CreateProduct": "إنشاء منتج",
+    "Products": "المنتجات",
+    "Product": "منتج",
+    "Variant": "متغير",
     "SKU": "SKU",
-    "Variants": "Variants",
-    "NoVariantsForProduct": "There are no variants for this product.",
-    "CreateVariant": "Create variant",
-    "ConfigLabel": "Inventory",
-    "ConfigDescription": "Extension to manage extensions"
+    "Variants": "المتغيرات",
+    "NoVariantsForProduct": "لا توجد متغيرات لهذا المنتج",
+    "CreateVariant": "إنشاء متغير",
+    "ConfigLabel": "المخزون",
+    "ConfigDescription": "إضافة لإدارة المخزون"
   }
 }
