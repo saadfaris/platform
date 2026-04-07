@@ -1,10 +1,10 @@
 {
   "string": {
-    "Downloads": "Downloads",
-    "Completed": "Completed",
-    "Cancelled": "Cancelled",
-    "Interrupted": "Interrupted",
-    "Paused": "Paused",
-    "Progressing": "Progressing"
+    "Downloads": "التنزيلات",
+    "Completed": "مكتمل",
+    "Cancelled": "ملغي",
+    "Interrupted": "متوقف",
+    "Paused": "متوقف مؤقتًا",
+    "Progressing": "جارٍ التنزيل"
   }
 }
