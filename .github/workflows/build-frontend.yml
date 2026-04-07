@@ -19,11 +19,15 @@
 #      SERVER_SECRET, MODEL_VERSION, VERSION, ...).
 #   4. Redeploy.
 #
-# IMPORTANT: the SPA refuses to load if its baked-in MODEL_VERSION does
-# not match the running backend's version. The default below pins it to
-# 0.7.330. When you upgrade the backend, run this workflow manually
-# (Actions → Build Frontend Image → Run workflow) and pass the new
-# version as the model_version input.
+# IMPORTANT: the SPA refuses to load (or gets stuck on the workspace
+# migration screen) if its baked-in MODEL_VERSION does not match the
+# running backend's INTERNAL version. The default below pins it to
+# 0.7.326, matching the version the backend pods actually report at
+# runtime (NOT the s0.7.330 docker image tag — Huly's image tags
+# don't always match the code's MODEL_VERSION constant). When you
+# upgrade the backend, run this workflow manually (Actions → Build
+# Frontend Image → Run workflow) and pass the new version as the
+# model_version input.
 
 name: Build Frontend Image (RTL fork)
 
@@ -52,9 +56,9 @@ on:
   workflow_dispatch:
     inputs:
       model_version:
-        description: 'Model/server version this frontend image must be in sync with (e.g. 0.7.330). MUST match the running backend or the SPA will refuse to load.'
+        description: 'INTERNAL MODEL_VERSION of the running backend (NOT the docker image tag — Huly s/v image tags can lie). Verified at 0.7.326 for the user stack via the workspace pod creating new workspaces at that exact version, even though the image tag is s0.7.330.'
         required: false
-        default: '0.7.330'
+        default: '0.7.326'
       tag_suffix:
         description: 'Extra tag suffix (optional, e.g. "preview")'
         required: false
@@ -63,16 +67,23 @@ on:
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/platform-front
   # The version baked into the frontend bundle MUST equal the running
-  # backend's MODEL_VERSION, otherwise the SPA prints
-  # "Front version X is not in sync with server version Y" and refuses to
-  # load. Override via workflow_dispatch when the backend is upgraded.
+  # backend's INTERNAL MODEL_VERSION, otherwise the SPA prints either
+  # "Front version X is not in sync with server version Y" or gets
+  # stuck on the workspace migration screen forever.
   #
-  # User's backend stack confirmed on hardcoreeng/*:s0.7.330 across
-  # transactor, workspace, account, collaborator. The workspace pod's
-  # "for version: 0.7.326" startup log refers to the operation's target
-  # data version (the workspace was originally created at 0.7.326), not
-  # the pod's own MODEL_VERSION which is 0.7.330.
-  MODEL_VERSION_DEFAULT: '0.7.330'
+  # The internal MODEL_VERSION is NOT the docker image tag. The user's
+  # stack uses hardcoreeng/*:s0.7.330 across all backend services, but
+  # the actual code inside those images reports MODEL_VERSION = 0.7.326.
+  # Evidence:
+  #   * Workspace pod startup log: "for version: 0.7.326"
+  #   * Brand new workspaces are CREATED at version 0.7.326
+  #   * Migration screen never resolves because workspace pod can't
+  #     produce a version higher than its own internal constant.
+  #
+  # Override via workflow_dispatch when the backend is genuinely
+  # upgraded (i.e. when a new image tag actually contains code with
+  # a different MODEL_VERSION).
+  MODEL_VERSION_DEFAULT: '0.7.326'
 
 jobs:
   build:
