@@ -1,19 +1,19 @@
 {
   "string": {
-    "Camera": "Camera",
-    "Microphone": "Microphone",
-    "Speaker": "Speaker",
-    "DefaultCam": "Default camera",
-    "DefaultMic": "Default microphone",
-    "DefaultSpeaker": "Default speaker",
-    "TurnOnCam": "Turn on camera",
-    "TurnOffCam": "Turn off camera",
-    "TurnOnMic": "Turn on microphone",
-    "TurnOffMic": "Turn off microphone",
-    "NoCam": "No camera",
-    "NoMic": "No microphone",
-    "NoSpeaker": "No speaker",
-    "On": "On",
-    "Off": "Off"
+    "Camera": "الكاميرا",
+    "Microphone": "الميكروفون",
+    "Speaker": "مكبر الصوت",
+    "DefaultCam": "الكاميرا الافتراضية",
+    "DefaultMic": "الميكروفون الافتراضي",
+    "DefaultSpeaker": "مكبر الصوت الافتراضي",
+    "TurnOnCam": "تشغيل الكاميرا",
+    "TurnOffCam": "إيقاف الكاميرا",
+    "TurnOnMic": "تشغيل الميكروفون",
+    "TurnOffMic": "إيقاف الميكروفون",
+    "NoCam": "لا توجد كاميرا",
+    "NoMic": "لا يوجد ميكروفون",
+    "NoSpeaker": "لا يوجد مكبر صوت",
+    "On": "تشغيل",
+    "Off": "إيقاف"
   }
 }
