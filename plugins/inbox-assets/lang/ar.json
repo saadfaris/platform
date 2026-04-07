@@ -1,13 +1,13 @@
 {
   "string": {
-    "Inbox": "Inbox",
-    "ReactedToYourMessage": "reacted to your message",
-    "ClearAll": "Clear all",
-    "InboxIsClear": "Inbox is clear",
-    "YouDontHaveAnyNewMessages": "You don’t have any new messages",
-    "ReadAll": "Read all",
-    "Clearing": "Clearing...",
-    "Reading": "Reading...",
-    "HideUserNames": "Hide user names"
+    "Inbox": "الوارد",
+    "ReactedToYourMessage": "تفاعل مع رسالتك",
+    "ClearAll": "مسح الكل",
+    "InboxIsClear": "الوارد فارغ",
+    "YouDontHaveAnyNewMessages": "لا توجد رسائل جديدة",
+    "ReadAll": "تحديد الكل كمقروء",
+    "Clearing": "جارٍ المسح...",
+    "Reading": "جارٍ التحديد كمقروء...",
+    "HideUserNames": "إخفاء أسماء المستخدمين"
   }
 }
