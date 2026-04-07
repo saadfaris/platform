@@ -20,7 +20,7 @@
     "Description": "الوصف",
     "Major": "رئيسي",
     "Minor": "فرعي",
-    "Patch": "تحديث إصلاحي"
+    "Patch": "تحديث إصلاحي",
     "Codename": "الاسم الرمزي",
     "ProductVersionStateActive": "نشط",
     "ProductVersionStateReleased": "تم الإصدار",
